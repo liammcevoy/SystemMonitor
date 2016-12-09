@@ -1,0 +1,73 @@
+import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import java.io.File;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+
+
+	
+
+
+public class MQTTSample {
+  public static void main(String[] args) throws Exception {
+
+	String c,d,e
+	//c = memory usage
+	// d =Disk usage
+	// e = CPU load
+		TimeUnit.SECONDS.sleep(2);
+		Scanner es = new Scanner(new File("file.txt"));
+		
+		c = es.nextLine();
+		d = es.nextLine();
+		e = es.nextLine();
+
+    String topic        = "assignment";
+    String content      = c + "" + d + "" + e + "";
+    int qos             = 1;
+    String broker       = "tcp://m21.cloudmqtt:18727";
+
+    //MQTT client id to use for the device. "" will generate a client id automatically
+    String clientId     = "ClientId";
+
+    MemoryPersistence persistence = new MemoryPersistence();
+    try {
+      MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
+      mqttClient.setCallback(new MqttCallback() {
+        public void messageArrived(String topic, MqttMessage msg)
+                  throws Exception {
+                      System.out.println("Recived:" + topic);
+                      System.out.println("Recived:" + new String(msg.getPayload()));
+                }
+
+        public void deliveryComplete(IMqttDeliveryToken arg0) {
+                    System.out.println("Delivary complete");
+                }
+
+        public void connectionLost(Throwable arg0) {
+                    // TODO Auto-generated method stub
+                }
+      });
+
+      MqttConnectOptions connOpts = new MqttConnectOptions();
+      connOpts.setCleanSession(true);
+      connOpts.setUserName("ocsnaicx");
+      connOpts.setPassword(new char[]{'k', '2', 'C', 'I', '3', 'x', 'd', '2', '9', '9', '_', 'P'});
+      mqttClient.connect(connOpts);
+      MqttMessage message = new MqttMessage(content.getBytes());
+      message.setQos(qos); 
+      System.out.println("Publish message: " + message);
+      mqttClient.subscribe(topic, qos);
+      mqttClient.publish(topic, message);
+      mqttClient.disconnect();
+      System.exit(0);
+    } catch(MqttException me) {
+      System.out.println("reason "+me.getReasonCode());
+      System.out.println("msg "+me.getMessage());
+      System.out.println("loc "+me.getLocalizedMessage());
+      System.out.println("cause "+me.getCause());
+      System.out.println("excep "+me);
+      me.printStackTrace();
+    }
+  }
+}

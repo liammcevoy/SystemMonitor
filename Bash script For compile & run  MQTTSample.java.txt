@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+javac -cp org.eclipse.paho.client.mqttv3-1.1.0jar:. MQTTSample.java
+
+java -cp org.eclipse.paho.client.mqttv3-1.1.0jar:. MQTTSample
